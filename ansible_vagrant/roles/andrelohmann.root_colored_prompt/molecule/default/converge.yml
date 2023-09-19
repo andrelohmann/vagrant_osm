@@ -1,8 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include andrelohmann.root_colored_prompt"
-      include_role:
-        name: "andrelohmann.root_colored_prompt"
-...

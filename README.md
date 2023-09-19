@@ -21,11 +21,36 @@ psql
 \dt+
 ```
 
+### Mapnik
+
+https://wiki.openstreetmap.org/wiki/DE:Mapnik
+
 ### Carto
 
 Stylesheet for the rendering of tiles
 
 https://wiki.openstreetmap.org/wiki/OpenStreetMap_Carto
+
+https://wiki.openstreetmap.org/wiki/CartoCSS
+
+https://wiki.openstreetmap.org/wiki/OpenStreetMap_Carto/Symbols
+
+https://github.com/gravitystorm/openstreetmap-carto/blob/master/USECASES.md
+
+### Seamarks
+
+We need to use the seamark type "mooring" with category "pile" (Dalben).
+
+https://wiki.openstreetmap.org/wiki/Seamarks/Seamark_Objects
+
+https://github.com/OpenNauticalChart/renderer <- maybe we can steal from here
+
+https://wiki.openstreetmap.org/wiki/Tag:man_made%3Ddolphin
+
+https://wiki.openstreetmap.org/wiki/Tag:seamark:type%3Dpile
+
+https://wiki.openstreetmap.org/wiki/Tag:seamark:type%3Dmooring
+
 
 ### Slippy Map
 
@@ -39,11 +64,13 @@ See the additional layers, currently not being rendered (all the piles in harbou
 
 https://www.openstreetmap.org/search?query=schleswig%20holstein#map=18/54.32938/10.17173&layers=D
 
+https://www.openstreetmap.org/edit#map=21/54.32957/10.17308
+
 ![Data Map](images/data_map.png)
 
 Watch the video to see, how piles are being created.
 
-![create piles](images/how_to_create_a_mooring_pile.mov)
+![create piles](images/create_mooring_pile.mov)
 
 ### Vagrant Machine
 
@@ -62,6 +89,8 @@ vagrant up
 
 The vagrant machine makes use of the hostmanager plugin, which adds domain entries toe the hosts /etc/hosts file.
 
+### Browse the tile server
+
 Open the browser on
 
-http://osm.lokal/#8/54.448/10.040 
+http://osm.lokal/#8/54.448/10.040
