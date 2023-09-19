@@ -70,7 +70,7 @@ https://www.openstreetmap.org/edit#map=21/54.32957/10.17308
 
 Watch the video to see, how piles are being created.
 
-![create piles](images/create_mooring_pile.mov)
+[create piles](images/create_mooring_pile.mov)
 
 ### Vagrant Machine
 
