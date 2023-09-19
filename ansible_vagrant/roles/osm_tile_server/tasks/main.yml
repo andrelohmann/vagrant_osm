@@ -1,0 +1,135 @@
+---
+- name: install required packages
+  ansible.builtin.apt:
+    name: "{{ osm_required_packages }}"
+    state: latest
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: yes
+    autoremove: yes
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Create directory osm/src
+  ansible.builtin.file:
+    path: /opt/osm/src
+    state: directory
+    recurse: yes
+    owner: vagrant
+    group: vagrant
+
+- name: Create directory osm/data
+  ansible.builtin.file:
+    path: /opt/osm/data
+    state: directory
+    recurse: yes
+    owner: vagrant
+    group: vagrant
+
+- name: Git openstreetmap-carto
+  ansible.builtin.git:
+    repo: 'https://github.com/gravitystorm/openstreetmap-carto.git'
+    dest: /opt/osm/src/openstreetmap-carto
+    #version: latest
+
+- name: Download osm.pbf
+  ansible.builtin.get_url:
+    url: https://download.geofabrik.de/europe/germany/schleswig-holstein-latest.osm.pbf
+    dest: /opt/osm/data
+    mode: '0755'
+
+- name: Install "carto" node.js package globally.
+  community.general.npm:
+    name: carto
+    global: true
+
+- name: Create the mapnik.xml
+  ansible.builtin.shell: carto project.mml > mapnik.xml
+  args:
+    executable: /bin/bash
+    creates: mapnik.xml
+    chdir: /opt/osm/src/openstreetmap-carto/
+
+- name: Import openstreetmap data
+  ansible.builtin.shell: sudo -u _renderd osm2pgsql -d gis --create --slim  -G --hstore --tag-transform-script src/openstreetmap-carto/openstreetmap-carto.lua -C 2500 --number-processes 1 -S src/openstreetmap-carto/openstreetmap-carto.style data/schleswig-holstein-latest.osm.pbf
+  args:
+    executable: /bin/bash
+    chdir: /opt/osm/
+  #become: yes
+  #become_user: _renderd
+
+- name: Add extra indexes
+  ansible.builtin.shell: sudo -u _renderd psql -d gis -f indexes.sql
+  args:
+    executable: /bin/bash
+    chdir: /opt/osm/src/openstreetmap-carto/
+  #become: yes
+  #become_user: _renderd
+
+- name: Create directory openstreetmap-carto/data
+  ansible.builtin.file:
+    path: /opt/osm/src/openstreetmap-carto/data
+    state: directory
+    recurse: yes
+    owner: _renderd
+    group: _renderd
+
+- name: Shapefile download
+  ansible.builtin.shell: sudo -u _renderd scripts/get-external-data.py
+  args:
+    executable: /bin/bash
+    chdir: /opt/osm/src/openstreetmap-carto/
+  #become: yes
+  #become_user: _renderd
+
+- name: Install fonts
+  ansible.builtin.shell: scripts/get-fonts.sh
+  args:
+    executable: /bin/bash
+    chdir: /opt/osm/src/openstreetmap-carto/
+
+- name: insert/update HTML surrounded by custom markers after <body> line
+  blockinfile:
+    path: /etc/renderd.conf
+    marker: "# S2O Block"
+    insertafter: "; ADD YOUR LAYERS:"
+    content: |
+      [s2o]
+      URI=/hot/
+      XML=/opt/osm/src/openstreetmap-carto/mapnik.xml
+      HOST=osm.lokal
+      TILESIZE=256
+      MAXZOOM=20
+
+- name: Set environmet
+  ansible.builtin.lineinfile:
+    path: /usr/lib/systemd/system/renderd.service
+    regexp: '^Environment'
+    insertafter: '^[Service]'
+    line: 'Environment=G_MESSAGES_DEBUG=all'
+
+- name: Just force systemd to reread configs
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart service renderd
+  ansible.builtin.systemd:
+    name: renderd.service
+    state: restarted
+
+- name: Reload service httpd, in all cases
+  ansible.builtin.systemd:
+    name: apache2.service
+    state: restarted
+
+- name: Download file from a file path
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/SomeoneElseOSM/mod_tile/switch2osm/extra/sample_leaflet.html
+    dest: /var/www/html/index.html
+
+- name: Set domain to
+  ansible.builtin.replace:
+    path: /var/www/html/index.html
+    regexp: '127.0.0.1'
+    replace: 'osm.lokal'
+
+...

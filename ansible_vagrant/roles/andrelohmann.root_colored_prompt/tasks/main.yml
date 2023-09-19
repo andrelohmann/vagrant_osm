@@ -1,0 +1,10 @@
+---
+
+- name: Set colored prompt
+  ansible.builtin.lineinfile:
+    path: /root/.bashrc
+    regexp: '^force_color_prompt'
+    insertafter: '^#force_color_prompt'
+    line: 'force_color_prompt=yes'
+
+...

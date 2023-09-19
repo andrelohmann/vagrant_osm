@@ -1,0 +1,47 @@
+---
+
+- name: Nginx proxy Setup
+  when: mailhog_proxy_nginx|bool and mailhog_proxy_domain is defined
+  block:
+
+  - name: Install nginx
+    ansible.builtin.apt:
+      name: "{{ packages }}"
+      state: present
+      dpkg_options: 'force-confnew,force-confdef'
+      autoclean: true
+      autoremove: true
+      update_cache: true
+      cache_valid_time: 3600
+    vars:
+      packages:
+      - nginx
+
+  - name: Add mailhog proxy config
+    ansible.builtin.template:
+      src: mailhog.nginx.conf
+      dest: /etc/nginx/sites-available/mailhog.conf
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Check for /etc/nginx/sites-enabled/mailhog.conf
+    ansible.builtin.stat:
+      path: /etc/nginx/sites-enabled/mailhog.conf
+    register: file_status
+
+  - name: Create a symbolic link for mailhog.conf
+    ansible.builtin.file:
+      src: /etc/nginx/sites-available/mailhog.conf
+      dest: /etc/nginx/sites-enabled/mailhog.conf
+      owner: root
+      group: root
+      state: link
+
+  - name: Restart nginx
+    ansible.builtin.systemd:
+      name: nginx
+      state: restarted
+    changed_when: file_status.stat.exists is false
+
+...

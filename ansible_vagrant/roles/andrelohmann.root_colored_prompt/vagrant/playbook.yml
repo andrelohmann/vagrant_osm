@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: true
+  become_method: sudo
+
+  vars: []
+
+  roles:
+  - ansible-role-root_colored_prompt
+  # - andrelohmann.root_colored_prompt
+...

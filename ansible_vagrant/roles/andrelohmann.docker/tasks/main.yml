@@ -1,0 +1,70 @@
+---
+- name: remove distribution packages
+  apt:
+    name: "{{ packages }}"
+    state: absent
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: yes
+    autoremove: yes
+    update_cache: yes
+    cache_valid_time: 3600
+  vars:
+    packages:
+    - docker
+    - docker-engine
+    - docker.io
+
+- name: install packages
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: yes
+    autoremove: yes
+    update_cache: yes
+    cache_valid_time: 3600
+  vars:
+    packages:
+    - apt-transport-https
+
+- name: add Docker key
+  apt_key:
+    url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+    state: present
+
+- name: Get DEB architecture
+  shell: dpkg --print-architecture
+  register: deb_architecture
+
+- name: install docker repo
+  apt_repository:
+    repo: "deb [arch={{ deb_architecture.stdout }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    state: present
+    filename: docker-ce
+
+- name: install docker
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: yes
+    autoremove: yes
+    update_cache: yes
+  vars:
+    packages:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+
+- name: create all users
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: yes
+  with_items: "{{ docker_users }}"
+
+- name: Install docker compose v2
+  include: compose.yml
+  when: docker_install_compose|bool
+
+...

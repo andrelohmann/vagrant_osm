@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    mailhog_smtp_port: 1025
+    mailhog_web_port: 8025
+    mailhog_path: /opt/mailhog
+    mailhog_release: v1.0.1
+  tasks:
+  - name: "Include andrelohmann.mailhog"
+    include_role:
+      name: "andrelohmann.mailhog"
+...

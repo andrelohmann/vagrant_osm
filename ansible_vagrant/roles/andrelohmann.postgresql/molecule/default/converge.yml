@@ -1,0 +1,39 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    postgresql_listen: "0.0.0.0"
+    postgresql_additional_packages:
+    - postgis
+    - osm2pgsql
+    postgresql_databases:
+    - name: test
+      encoding: UTF-8
+      state: present
+      schemas:
+      - name: schemaone
+        state: present
+      - name: schematwo
+        state: present
+      extensions:
+      - name: postgis
+        state: present
+      - name: hstore
+        state: present
+    postgresql_users:
+    - name: testuser
+      password: 1234test
+      state: present
+      privileges:
+      - database: test
+        privs: "All"
+        state: present
+      hosts:
+      - cidr: 0.0.0.0/0
+        database: test
+        state: present
+  tasks:
+  - name: "Include andrelohmann.postgresql"
+    include_role:
+      name: "andrelohmann.postgresql"
+...

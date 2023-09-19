@@ -1,0 +1,13 @@
+---
+roles: #[]
+- andrelohmann.root_colored_prompt
+- andrelohmann.mailhog
+- andrelohmann.postgresql
+#- andrelohmann.docker
+# This will be necessary when Ansible 2.10 is released
+#collections:
+#- community.general # a dependency for the andrelohmann.grafana_oss role
+#collections:
+#- name: community.grafana#
+#  version: 1.2.0
+...

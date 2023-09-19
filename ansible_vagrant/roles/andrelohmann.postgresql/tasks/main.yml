@@ -1,0 +1,115 @@
+---
+
+- name: Install postgresql packages
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+    state: present
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: true
+    autoremove: true
+    update_cache: true
+    cache_valid_time: 3600
+  vars:
+    packages:
+    - python3-psycopg2
+    - postgresql
+    - postgresql-client
+    - postgresql-contrib
+    - acl
+
+- name: Install additional packages
+  ansible.builtin.apt:
+    name: "{{ postgresql_additional_packages }}"
+    state: present
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: true
+    autoremove: true
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Set config path
+  ansible.builtin.set_fact:
+    _postgresql_config_path: "/etc/postgresql/{{ postgresql_version[ansible_distribution_release] }}/main/"
+
+- name: Set listen_addresses
+  ansible.builtin.lineinfile:
+    path: "{{ _postgresql_config_path }}postgresql.conf"
+    regexp: "^listen_addresses ="
+    insertafter: "^#listen_addresses ="
+    line: "listen_addresses = '{{ postgresql_listen }}'"
+  notify: Restart postgresql
+
+- name: Restart postgresql
+  ansible.builtin.meta: flush_handlers
+
+- name: Create all databases
+  community.postgresql.postgresql_db:
+    encoding: "{{ item.encoding | default(omit) }}"
+    name: "{{ item.name | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+  become: true
+  become_user: postgres
+  with_items: "{{ postgresql_databases }}"
+
+- name: Create schemas
+  community.postgresql.postgresql_schema:
+    database: "{{ item.0.name }}"
+    name: "{{ item.1.name }}"
+    state: "{{ item.1.state }}"
+  become: true
+  become_user: postgres
+  with_subelements:
+  - "{{ postgresql_databases }}"
+  - schemas
+
+- name: Create extensions
+  community.postgresql.postgresql_ext:
+    db: "{{ item.0.name }}"
+    name: "{{ item.1.name }}"
+    state: "{{ item.1.state }}"
+    cascade: "{{ item.1.cascade | default(omit) }}"
+    schema: "{{ item.1.schema | default(omit) }}"
+    version: "{{ item.1.version | default(omit) }}"
+  become: true
+  become_user: postgres
+  with_subelements:
+  - "{{ postgresql_databases }}"
+  - extensions
+
+- name: Create user
+  community.postgresql.postgresql_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    state: "{{ item.state }}"
+  become: true
+  become_user: postgres
+  with_items: "{{ postgresql_users }}"
+
+- name: Create privileges
+  community.postgresql.postgresql_privs:
+    database: "{{ item.1.database }}"
+    roles: "{{ item.0.name }}"
+    state: "{{ item.1.state }}"
+    privs: "{{ item.1.privs }}"
+    type: "{{ item.1.type | default('database') }}"
+    objs: "{{ item.1.objs | default(omit) }}"
+    schema: "{{ item.1.schema | default(omit) }}"
+    grant_option: "{{ item.1.grant_option | default(omit) }}"
+  become: true
+  become_user: postgres
+  with_subelements:
+  - "{{ postgresql_users }}"
+  - privileges
+
+- name: Set listen_addresses
+  ansible.builtin.lineinfile:
+    path: "{{ _postgresql_config_path }}pg_hba.conf"
+    regexp: "^host {{ item.1.database }} {{ item.0.name }} {{ item.1.cidr }} md5"
+    line: "host {{ item.1.database }} {{ item.0.name }} {{ item.1.cidr }} md5"
+    state: "{{ item.1.state }}"
+  with_subelements:
+  - "{{ postgresql_users }}"
+  - hosts
+  notify: Restart postgresql
+
+...

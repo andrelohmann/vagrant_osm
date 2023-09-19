@@ -1,0 +1,34 @@
+---
+- name: install packages
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: yes
+    autoremove: yes
+    update_cache: yes
+    cache_valid_time: 3600
+  vars:
+    packages:
+    - curl
+
+- name: Remove previous docker-compose
+  file:
+    path: /usr/libexec/docker/cli-pluginsdocker-compose
+    state: absent
+
+- name: fetch lates docker-compose version
+  shell: curl -s -o /dev/null -I -w "%{redirect_url}\n" https://github.com/docker/compose/releases/latest | grep -oP "[0-9]+(\.[0-9]+)+$"
+  args:
+    executable: /bin/bash
+  register: docker_compose_version
+
+- name: install docker-compose
+  get_url:
+    url: https://github.com/docker/compose/releases/download/v{{ docker_compose_version.stdout }}/docker-compose-linux-x86_64
+    owner: root
+    group: root
+    dest: /usr/libexec/docker/cli-plugins/docker-compose
+    mode: 0755
+
+...

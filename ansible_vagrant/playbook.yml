@@ -1,0 +1,78 @@
+---
+- hosts: all
+  become: true
+  become_method: sudo
+
+  vars:
+    required_packages:
+    - git
+    - tcptraceroute
+    - nmap
+    - net-tools
+    - htop
+    - jq
+    - python3-pip
+    required_python_packages: []
+    #docker_users:
+    #- vagrant
+    mailhog_smtp_port: 1025
+    mailhog_web_port: 8025
+    mailhog_proxy_apache: True
+    mailhog_proxy_domain: mail.elastic.lokal
+    postgresql_listen: "192.168.56.101"
+    postgresql_additional_packages:
+    - postgis
+    - osm2pgsql
+    postgresql_databases:
+    - name: gis
+      encoding: UTF-8
+      state: present
+      schemas: []
+      #- name: schemaone
+      #  state: present
+      #- name: schematwo
+      #  state: present
+      extensions:
+      - name: postgis
+        state: present
+      - name: hstore
+        state: present
+    postgresql_users:
+    - name: _renderd
+      password: 1234test
+      state: present
+      privileges:
+      - database: gis
+        privs: "All"
+        state: present
+      hosts:
+      - cidr: 192.168.56.101/0
+        database: gis
+        state: present
+
+  pre_tasks:
+  - name: check for file custom_vars.yml
+    stat:
+      path: custom_vars.yml
+    register: stat_custom_vars
+  - name: load custom vars, if existent
+    include_vars:
+      file: custom_vars.yml
+    when: stat_custom_vars.stat.exists
+
+  roles:
+  - andrelohmann.root_colored_prompt
+  - default_tasks
+  #- andrelohmann.docker
+  - andrelohmann.postgresql
+  - osm_tile_server
+  - andrelohmann.mailhog
+
+  #tasks:
+
+  #- name: restart prometheus after each change
+  #  systemd:
+  #    name: prometheus
+  #    state: restarted
+
+...

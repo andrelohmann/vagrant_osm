@@ -1,0 +1,68 @@
+---
+
+- name: Apache proxy Setup
+  when: mailhog_proxy_apache|bool and mailhog_proxy_domain is defined
+  block:
+
+  - name: Install apache
+    ansible.builtin.apt:
+      name: "{{ packages }}"
+      state: present
+      dpkg_options: 'force-confnew,force-confdef'
+      autoclean: true
+      autoremove: true
+      update_cache: true
+      cache_valid_time: 3600
+    vars:
+      packages:
+      - apache2
+
+  - name: Add mailhog proxy config
+    ansible.builtin.template:
+      src: mailhog.apache.conf
+      dest: /etc/apache2/sites-available/mailhog.conf
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Enable rewrite module
+    community.general.apache2_module:
+      state: present
+      name: rewrite
+
+  - name: Enable proxy module
+    community.general.apache2_module:
+      state: present
+      name: proxy
+
+  - name: Enable proxy_balancer module
+    community.general.apache2_module:
+      state: present
+      name: proxy_balancer
+
+  - name: Enable proxy_http module
+    community.general.apache2_module:
+      state: present
+      name: proxy_http
+
+  - name: Enable proxy_http module
+    community.general.apache2_module:
+      state: present
+      name: proxy_wstunnel
+
+  - name: Check for /etc/apache2/sites-enabled/mailhog.conf
+    ansible.builtin.stat:
+      path: /etc/apache2/sites-enabled/mailhog.conf
+    register: file_status
+
+  - name: Activate a2ensite mail
+    ansible.builtin.command: a2ensite mailhog.conf
+    changed_when: file_status.stat.exists is false
+
+  - name: Restart apache2
+    ansible.builtin.systemd:
+      name: apache2
+      state: restarted
+    changed_when: file_status.stat.exists is false
+
+...

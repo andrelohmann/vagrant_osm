@@ -1,0 +1,10 @@
+---
+configs:
+  memory: "4096"
+  cpus: "4"
+  ip: "192.168.56.101"
+  domain: osm.lokal
+  aliases:
+  - mail.osm.lokal
+  - tile.osm.lokal
+...

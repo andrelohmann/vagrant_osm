@@ -1,0 +1,43 @@
+---
+
+- name: Create mailhog directory
+  ansible.builtin.file:
+    path: "{{ mailhog_path }}"
+    state: directory
+    mode: 0644
+
+- name: Download MailHog
+  ansible.builtin.get_url:
+    url: "https://github.com/mailhog/MailHog/releases/download/{{ mailhog_release }}/MailHog_linux_amd64"
+    dest: "{{ mailhog_path }}/mailhog"
+    mode: 0755
+
+- name: Add mailhog systemd unit file
+  ansible.builtin.template:
+    src: mailhog.service
+    dest: /etc/systemd/system/mailhog.service
+    mode: 0644
+
+- name: Just force systemd to reread configs
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable mailhog
+  ansible.builtin.systemd:
+    name: mailhog
+    enabled: true
+
+- name: Start mailhog
+  ansible.builtin.systemd:
+    name: mailhog
+    state: started
+
+- name: Setup apache proxy
+  ansible.builtin.include_tasks: apache.yml
+  when: mailhog_proxy_apache | bool
+
+- name: Setup nginx proxy
+  ansible.builtin.include_tasks: nginx.yml
+  when: mailhog_proxy_nginx | bool
+
+...
