@@ -73,7 +73,7 @@ Watch the video to see, how piles are being created.
 [create piles](images/create_mooring_pile.mov)
 
 <video width="320" height="240" controls>
-  <source src="images/create_mooring_pile.mov" type="video/mp4">
+  <source src="https://github.com/andrelohmann/vagrant_osm/raw/main/images/create_mooring_pile.mov" type="video/mp4">
 </video>
 
 ### Vagrant Machine
