@@ -46,7 +46,10 @@
         privs: "All"
         state: present
       hosts:
-      - cidr: 192.168.56.101/0
+      - cidr: 0.0.0.0/0
+        database: gis
+        state: present
+      - cidr: localhost
         database: gis
         state: present
 
@@ -67,6 +70,7 @@
   - andrelohmann.postgresql
   - osm_tile_server
   - andrelohmann.mailhog
+  - adminer
 
   #tasks:
 

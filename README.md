@@ -98,3 +98,15 @@ The vagrant machine makes use of the hostmanager plugin, which adds domain entri
 Open the browser on
 
 http://osm.lokal/#8/54.448/10.040
+
+### Browse the Database
+
+http://osm.lokal/
+
+```
+System: PostgreSQL
+Server: localhost
+Username: _rendered
+Password: 1234test
+Database: gis
+```
