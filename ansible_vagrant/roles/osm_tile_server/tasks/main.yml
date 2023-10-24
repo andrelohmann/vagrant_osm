@@ -31,6 +31,95 @@
     dest: /opt/osm/src/openstreetmap-carto
     #version: latest
 
+- name: Create directory /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
+  ansible.builtin.file:
+    path: /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
+    state: directory
+    recurse: yes
+    owner: vagrant
+    group: vagrant
+
+- name: Add custom_seamark_mooring.mss to carto /opt/osm/src/openstreetmap-carto/style
+  ansible.builtin.copy:
+    src: custom_seamark_mooring.mss
+    dest: /opt/osm/src/openstreetmap-carto/style/custom_seamark_mooring.mss
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+
+# Icons taken from https://wiki.openstreetmap.org/wiki/Tag:seamark:type%3Dmooring
+- name: Add dolphin icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
+  ansible.builtin.copy:
+    src: Dolphin.png
+    dest: /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring/dolphin.png
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+
+- name: Add bollard icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
+  ansible.builtin.copy:
+    src: MBollard.png
+    dest: /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring/bollard.png
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+
+- name: Add pile icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
+  ansible.builtin.copy:
+    src: Post.png
+    dest: /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring/pile.png
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+
+- name: Add post icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
+  ansible.builtin.copy:
+    src: MBollard.png
+    dest: /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring/post.png
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+
+- name: Add custom_seamarks.mss Style to carto project.mml
+  ansible.builtin.lineinfile:
+    path: /opt/osm/src/openstreetmap-carto/project.mml
+    regexp: '^  - style/custom_seamarks.mss'
+    insertafter: '  - style/tourism.mss'
+    line: '  - style/custom_seamark_mooring.mss'
+
+- name: Add custom_seamark_mooring Layer to carto project.mml
+  ansible.builtin.blockinfile:
+    path: /opt/osm/src/openstreetmap-carto/project.mml
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    #insertafter: "Layer:"
+    block: |2
+        - id: seamark-moorings
+          geometry: point
+          <<: *extents
+          Datasource:
+            <<: *osm2pgsql
+            table: |-
+              (SELECT
+                way,
+                tags->'seamark:mooring:category' AS category
+              FROM planet_osm_point
+              WHERE
+                tags @> 'seamark:type=>mooring'
+              AND
+                (
+                  tags @> 'seamark:mooring:category=>dolphin'
+                OR
+                  tags @> 'seamark:mooring:category=>bollard'
+                OR
+                  tags @> 'seamark:mooring:category=>pile'
+                OR
+                  tags @> 'seamark:mooring:category=>post'
+                )
+              ) AS seamark_moorings
+          properties:
+            minzoom: 15
+            maxzoom: 22
+
 - name: Download osm.pbf
   ansible.builtin.get_url:
     url: https://download.geofabrik.de/europe/germany/schleswig-holstein-latest.osm.pbf

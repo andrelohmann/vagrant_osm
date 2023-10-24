@@ -12,14 +12,18 @@
     - htop
     - jq
     - python3-pip
+    - apache2
+    - osmium-tool
     required_python_packages: []
-    #docker_users:
-    #- vagrant
-    mailhog_smtp_port: 1025
-    mailhog_web_port: 8025
-    mailhog_proxy_apache: True
-    mailhog_proxy_domain: mail.elastic.lokal
-    postgresql_listen: "192.168.56.101"
+    mailpit_proxy_apache: true
+    mailpit_proxy_domain: mail.osm.lokal
+    mailpit_proxy_port: 80
+    pgadmin_domain: pgadmin.osm.lokal
+    pgadmin_email: admin@pgadmin.osm.lokal
+    pgadmin_password: admin
+
+    #postgresql_listen: "192.168.56.101"
+    postgresql_listen: "0.0.0.0"
     postgresql_additional_packages:
     - postgis
     - osm2pgsql
@@ -28,10 +32,6 @@
       encoding: UTF-8
       state: present
       schemas: []
-      #- name: schemaone
-      #  state: present
-      #- name: schematwo
-      #  state: present
       extensions:
       - name: postgis
         state: present
@@ -39,7 +39,7 @@
         state: present
     postgresql_users:
     - name: _renderd
-      password: 1234test
+      password: renderd.secret
       state: present
       privileges:
       - database: gis
@@ -66,11 +66,10 @@
   roles:
   - andrelohmann.root_colored_prompt
   - default_tasks
-  #- andrelohmann.docker
   - andrelohmann.postgresql
   - osm_tile_server
-  - andrelohmann.mailhog
-  - adminer
+  - andrelohmann.mailpit
+  - pgadmin
 
   #tasks:
 

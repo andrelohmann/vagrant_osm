@@ -1,0 +1,57 @@
+---
+
+- name: APT | Install gpg key
+  ansible.builtin.apt_key:
+    url: https://www.pgadmin.org/static/packages_pgadmin_org.pub
+    state: present
+
+- name: Apt | Add apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/{{ ansible_distribution_release }} pgadmin4 main"
+    state: present
+    filename: pgadmin4
+
+- name: APT | Install pgadmin4
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+    state: present
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: true
+    autoremove: true
+    update_cache: true
+    cache_valid_time: 3600
+  vars:
+    packages:
+    - pgadmin4-web
+
+- name: Setup PG Admin
+  ansible.builtin.shell: PGADMIN_SETUP_PASSWORD={{ pgadmin_password }} PGADMIN_SETUP_EMAIL={{ pgadmin_email }} /usr/pgadmin4/bin/setup-web.sh --yes
+  args:
+    executable: /bin/bash
+
+- name: Set smtp port
+  ansible.builtin.lineinfile:
+    path: "/usr/pgadmin4/web/config.py"
+    regexp: "^MAIL_PORT = "
+    line: "MAIL_PORT = {{ mailpit_smtp_port }}"
+
+- name: Add pgadmin config
+  ansible.builtin.template:
+    src: pgadmin.conf.j2
+    dest: /etc/apache2/sites-available/pgadmin.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Deactivate pgadmin4 config
+  ansible.builtin.command: a2disconf pgadmin4.conf
+
+- name: Activate pgadmin4 site
+  ansible.builtin.command: a2ensite pgadmin.conf
+
+- name: Restart apache
+  ansible.builtin.systemd:
+    name: "apache2"
+    state: "restarted"
+
+...

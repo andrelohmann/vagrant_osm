@@ -1,0 +1,17 @@
+<VirtualHost *:80>
+  ServerAdmin  email@{{ pgadmin_domain }}
+  ServerName {{ pgadmin_domain }}
+
+  ErrorLog /var/log/apache2/pgadmin-error.log
+  CustomLog /var/log/apache2/pgadmin-access.log combined
+
+  LoadModule wsgi_module modules/mod_wsgi.so
+  WSGIDaemonProcess pgadmin processes=1 threads=25 python-home=/usr/pgadmin4/venv
+  WSGIScriptAlias / /usr/pgadmin4/web/pgAdmin4.wsgi
+
+  <Directory /usr/pgadmin4/web/>
+      WSGIProcessGroup pgadmin
+      WSGIApplicationGroup %{GLOBAL}
+      Require all granted
+  </Directory>
+</VirtualHost>

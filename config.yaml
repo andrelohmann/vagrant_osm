@@ -1,10 +1,11 @@
 ---
 configs:
-  memory: "4096"
+  memory: "6144"
   cpus: "4"
   ip: "192.168.56.101"
   domain: osm.lokal
   aliases:
-  - mail.osm.lokal
   - tile.osm.lokal
+  - mail.osm.lokal
+  - pgadmin.osm.lokal
 ...

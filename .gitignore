@@ -1,3 +1,5 @@
 .vagrant
 .DS_Store
 ansible_vagrant/roles/andrelohmann.*
+osm-data/*
+!osm-data/.gitkeep

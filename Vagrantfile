@@ -66,6 +66,7 @@ Vagrant.configure("2") do |config|
   # config.vm.synced_folder "../data", "/vagrant_data"
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder "ansible_vagrant", "/vagrant/ansible_vagrant", create: true, owner: "vagrant", group: "vagrant", mount_options: ["dmode=775,fmode=775"]
+  config.vm.synced_folder "osm-data", "/opt/osm", create: true, owner: "vagrant", group: "vagrant", mount_options: ["dmode=777,fmode=777"]
 
   # auto update guest additions
   config.vbguest.auto_update = true
