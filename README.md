@@ -4,7 +4,7 @@
 
 ## Content
 
-This repository is a starting point to get a deep dive into OSM Development. It is based on the [switch2osm](https://switch2osm.org/serving-tiles/manually-building-a-tile-server-ubuntu-22-04-lts/) installation instructuins.
+This repository is a starting point to get a deep dive into OSM Development. It is based on the [switch2osm](https://switch2osm.org/serving-tiles/manually-building-a-tile-server-ubuntu-22-04-lts/) installation instructions.
 
 ### Components
 
@@ -257,7 +257,13 @@ journalctl -u renderd
   * https://wiki.openstreetmap.org/wiki/PostGIS
   * https://osm2pgsql.org/
 
-## Polygons
+## Todo
+
+### Add Drone images overlay to editor
+
+https://blog.mapbox.com/drone-imagery-for-openstreetmap-18a30565b744
+
+### Ad polygons for harbor data
 
 https://osmand.net/docs/technical/map-creation/creating-a-country-polygon/
 
