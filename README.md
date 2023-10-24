@@ -190,7 +190,7 @@ We will find our created piles as nodes in the osm file.
 </node>
 ```
 
-This data will be imported into the postgres database via osm2pgsql. This happens during the ansible deployment in step "Import openstreetmap data" (ansible_vagrant/roles/osm_tile_server/tasks/main.yml).
+This data will be imported into the postgres database via osm2pgsql. This happens during the ansible deployment in step "[Import openstreetmap data](https://github.com/andrelohmann/vagrant_osm/blob/main/ansible_vagrant/roles/osm_tile_server/tasks/main.yml#L141)" (ansible_vagrant/roles/osm_tile_server/tasks/main.yml).
 
 ### Step 4
 
@@ -224,14 +224,14 @@ We need to copy our seamark icons to /opt/osm/src/openstreetmap-carto/symbols/. 
 
 These steps can be found in osm_tile_server role (ansible_vagrant/roles/osm_tile_server/tasks/main.yml).
 
-  * Add dolphin icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
-  * Add bollard icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
-  * Add pile icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
-  * Add post icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring
-  * Add custom_seamark_mooring.mss to carto /opt/osm/src/openstreetmap-carto/style
-  * Add custom_seamarks.mss Style to carto project.mml
-  * Add custom_seamark_mooring Layer to carto project.mml
-  * Create the mapnik.xml
+  * [Add dolphin icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring](https://github.com/andrelohmann/vagrant_osm/blob/main/ansible_vagrant/roles/osm_tile_server/tasks/main.yml#L51)
+  * [Add bollard icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring](https://github.com/andrelohmann/vagrant_osm/blob/main/ansible_vagrant/roles/osm_tile_server/tasks/main.yml#L59)
+  * [Add pile icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring](https://github.com/andrelohmann/vagrant_osm/blob/main/ansible_vagrant/roles/osm_tile_server/tasks/main.yml#L67)
+  * [Add post icon to /opt/osm/src/openstreetmap-carto/symbols/custom_seamark_mooring](https://github.com/andrelohmann/vagrant_osm/blob/main/ansible_vagrant/roles/osm_tile_server/tasks/main.yml#L75)
+  * [Add custom_seamark_mooring.mss to carto /opt/osm/src/openstreetmap-carto/style](https://github.com/andrelohmann/vagrant_osm/blob/main/ansible_vagrant/roles/osm_tile_server/tasks/main.yml#L42)
+  * [Add custom_seamarks.mss Style to carto project.mml](https://github.com/andrelohmann/vagrant_osm/blob/main/ansible_vagrant/roles/osm_tile_server/tasks/main.yml#L83)
+  * [Add custom_seamark_mooring Layer to carto project.mml](https://github.com/andrelohmann/vagrant_osm/blob/main/ansible_vagrant/roles/osm_tile_server/tasks/main.yml#L90)
+  * [Create the mapnik.xml](https://github.com/andrelohmann/vagrant_osm/blob/main/ansible_vagrant/roles/osm_tile_server/tasks/main.yml#L134)
 
 Studying of the existing layers and style/*.mss files is definetly helpful, to figure out, how to setp your own layers.
 
