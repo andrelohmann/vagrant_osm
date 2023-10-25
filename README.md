@@ -235,6 +235,17 @@ These steps can be found in osm_tile_server role (ansible_vagrant/roles/osm_tile
 
 Studying of the existing layers and style/*.mss files is definetly helpful, to figure out, how to setp your own layers.
 
+## Prerendering
+
+All tiles can be prerendered with render_list
+
+```
+sudo -u _renderd render_list --all --num-threads=4 --map=s2o --min-zoom=0 --max-zoom=20
+```
+
+https://manpages.ubuntu.com/manpages/jammy/man1/render_list.1.html
+
+
 ## Debugging
 
 ```
@@ -261,7 +272,13 @@ journalctl -u renderd
 
 ### Add Drone images overlay to editor
 
-https://blog.mapbox.com/drone-imagery-for-openstreetmap-18a30565b744
+  * https://blog.mapbox.com/drone-imagery-for-openstreetmap-18a30565b744
+  * https://www.mapbox.com/industries/drones
+  * https://www.dji.com/de/downloads/products/ground-station-pro
+  * https://docs.opendronemap.org/tutorials/
+  * https://docs.openaerialmap.org/
+  * https://github.com/maptiler/tileserver-php
+  * https://geoserver.org/tips%20and%20tricks/tutorials/2009/01/30/geoserver-and-openstreetmap.html
 
 ### Ad polygons for harbor data
 

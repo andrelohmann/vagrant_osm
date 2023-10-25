@@ -175,6 +175,8 @@
   args:
     executable: /bin/bash
     chdir: /opt/osm/src/openstreetmap-carto/
+  # crrently some of te download urls are responding with an outdated certificate
+  ignore_errors: true
 
 - name: insert/update HTML surrounded by custom markers after <body> line
   blockinfile:

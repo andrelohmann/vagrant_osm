@@ -29,6 +29,12 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "ubuntu/jammy64"
 
+  config.trigger.after :destroy do |trigger|
+    trigger.info = "Cleaning osm-data directory ..."
+    #trigger.run = {inline: "rm -rf ./osm-data/* !(\".gitkeep\")"}
+    trigger.run = {inline: "rm -rf osm-data/data osm-data/src"}
+  end
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
