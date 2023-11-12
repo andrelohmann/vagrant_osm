@@ -279,6 +279,18 @@ journalctl -u renderd
   * https://docs.openaerialmap.org/
   * https://github.com/maptiler/tileserver-php
   * https://geoserver.org/tips%20and%20tricks/tutorials/2009/01/30/geoserver-and-openstreetmap.html
+    
+#### Drone Image Mapping Software
+
+  * https://flylitchi.com/
+  * https://www.youtube.com/watch?v=IMt-Ow00yEw
+  * https://www.qgis.org/de/site/
+  * https://opendronemap.org/
+  * https://dronesmadeeasy.com/map-pilot
+  * https://www.mapsmadeeasy.com/
+  * https://www.youtube.com/watch?v=kZRXH9uNhoA
+  * https://www.youtube.com/watch?v=UdqMAfBXxC4
+  * https://www.youtube.com/watch?v=B6osz-cBw2o
 
 ### Ad polygons for harbor data
 
