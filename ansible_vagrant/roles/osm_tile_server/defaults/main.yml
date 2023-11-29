@@ -30,4 +30,5 @@ osm_required_packages:
 - osm2pgsql
 - net-tools
 - curl
+- osmctools
 ...
