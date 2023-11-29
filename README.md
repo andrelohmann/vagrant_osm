@@ -256,6 +256,22 @@ systemctl restart renderd
 journalctl -u renderd
 ```
 
+## Polygon
+
+To reduce the map to a polygon, you first need to get the edges (lower left, upper right) of the polygon.
+
+For Kieler Förde e.g. the process is as followed:
+
+* open google maps
+* klick on the map
+* note down the geo coordinates
+
+![Query Tool](images/lower_left.png)
+
+* do the same for the upper right corner
+
+![Query Tool](images/upper_right.png)
+
 ## Links
 
   * https://wiki.openstreetmap.org/wiki/DE:Mapnik
