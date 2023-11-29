@@ -260,6 +260,14 @@ journalctl -u renderd
 
 To reduce the map to a polygon, you first need to get the edges (lower left, upper right) of the polygon.
 
+### Helpful links
+
+* [osmctools](https://wiki.openstreetmap.org/wiki/Osmconvert)
+* https://osmand.net/docs/technical/map-creation/creating-a-country-polygon/
+* https://www.google.com/maps/@54.4038341,10.165821,10.5z?entry=ttu
+
+### Step 1
+
 For Kieler Förde e.g. the process is as followed:
 
 * open google maps
@@ -271,6 +279,27 @@ For Kieler Förde e.g. the process is as followed:
 * do the same for the upper right corner
 
 ![Query Tool](images/upper_right.png)
+
+This will result in the coordinates of
+
+|              | Longitude | Latitude  |
+|--------------|-----------|-----------|
+| lower left   | 10.094472 | 54.300117 |
+| upper right  | 10.327428 | 54.453653 |
+
+### Step 2
+
+All *.osm.pbf files will be reduced by the tool "osmconvert" which we will found in the package "osmctools"
+
+* apt install osmctools
+
+### Step 3
+
+Reduce the pbf file
+
+```
+osmconvert schleswig-holstein-latest.osm.pbf -b=10.094472,54.300117,10.327428,54.453653 -o=reduced_data.osm.pbf
+```
 
 ## Links
 
