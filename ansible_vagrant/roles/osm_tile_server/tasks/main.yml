@@ -120,11 +120,18 @@
             minzoom: 15
             maxzoom: 22
 
-- name: Download osm.pbf
+- name: Download schleswig-holstein-latest.osm.pbf
   ansible.builtin.get_url:
     url: https://download.geofabrik.de/europe/germany/schleswig-holstein-latest.osm.pbf
-    dest: /opt/osm/data
+    dest: /opt/osm/data/data.osm.pbf
     mode: '0755'
+
+- name: Reduce the osm.pbf data to Kieler Förde (10.094472 , 54.300117 | 10.327428 , 54.453653 )
+  ansible.builtin.shell: osmconvert data.osm.pbf -b=10.094472,54.300117,10.327428,54.453653 -o=reduced_data.osm.pbf
+  args:
+    executable: /bin/bash
+    creates: reduced_data.osm.pbf
+    chdir: /opt/osm/data/
 
 - name: Install "carto" node.js package globally.
   community.general.npm:
@@ -139,7 +146,7 @@
     chdir: /opt/osm/src/openstreetmap-carto/
 
 - name: Import openstreetmap data
-  ansible.builtin.shell: sudo -u _renderd osm2pgsql -d gis --create --slim  -G --hstore --tag-transform-script src/openstreetmap-carto/openstreetmap-carto.lua -C 2500 --number-processes 1 -S src/openstreetmap-carto/openstreetmap-carto.style data/schleswig-holstein-latest.osm.pbf
+  ansible.builtin.shell: sudo -u _renderd osm2pgsql -d gis --create --slim  -G --hstore --tag-transform-script src/openstreetmap-carto/openstreetmap-carto.lua -C 2500 --number-processes 1 -S src/openstreetmap-carto/openstreetmap-carto.style data/reduced_data.osm.pbf
   args:
     executable: /bin/bash
     chdir: /opt/osm/
